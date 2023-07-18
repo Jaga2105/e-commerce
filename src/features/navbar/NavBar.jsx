@@ -5,6 +5,7 @@ import {
   ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 const user = {
   name: "Tom Cook",
@@ -65,18 +66,20 @@ const NavBar = ({ children }) => {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      <button
-                        type="button"
-                        className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <ShoppingCartIcon
-                          className="h-6 w-6"
-                          aria-hidden="true"
-                        />
-                      </button>
-                      <span className="inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
-                        2
-                      </span>
+                      <Link to={"/cart"}>
+                        <button
+                          type="button"
+                          className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        >
+                          <ShoppingCartIcon
+                            className="h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        </button>
+                        </Link>
+                        <span className="inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
+                          2
+                        </span>
 
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
@@ -160,7 +163,8 @@ const NavBar = ({ children }) => {
                   ))}
                 </div>
                 <div className="border-t border-gray-700 pb-3 pt-4">
-                  <div className="flex items-center px-5">
+                  <div className="flex items-center justify-between px-5">
+                    <div className="flex">
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
@@ -176,19 +180,25 @@ const NavBar = ({ children }) => {
                         {user.email}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <ShoppingCartIcon
-                        className="h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <span className="inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
-                      2
-                    </span>
+                    </div>
+                    <div className="relative">
+                    <Link to={"/cart"}>
+                      <button
+                        type="button"
+                        className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      >
+                        <span className="sr-only">View notifications</span>
+                        <ShoppingCartIcon
+                          className="h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    </Link>
+                      <span className="absolute -top-2 inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
+                        2
+                      </span>
+                    </div>
+                    
                   </div>
                   <div className="mt-3 space-y-1 px-2">
                     {userNavigation.map((item) => (

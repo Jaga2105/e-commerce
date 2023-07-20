@@ -31,15 +31,12 @@ const products = [
   // More products...
 ];
 
-const Cart = () => {
-  const [open, setOpen] = useState(true);
+const OrderSummary = () => {
 
   return (
     <div className="mx-auto mt-12 bg-white max-w-7xl px-4 rounded-xl sm:px-6 lg:px-8">
       <div className="mt-8 px-4 sm:px-6 py-6">
-        <h1 className="text-4xl mb-4 text-center font-bold tracking-tight text-gray-900">
-          Cart
-        </h1>
+
         <div className="flow-root">
           <ul role="list" className="-my-6 divide-y divide-gray-200">
             {products.map((product) => (
@@ -84,7 +81,7 @@ const Cart = () => {
                     <div className="flex">
                       <button
                         type="button"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                        className="font-medium text-[#f63b60] hover:text-[#f63b30]"
                       >
                         Remove
                       </button>
@@ -106,31 +103,16 @@ const Cart = () => {
           Shipping and taxes calculated at checkout.
         </p>
         <div className="mt-6">
-          <Link
-            to={"/checkout"}
-            className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+          <a
+            href="#"
+            className="flex items-center justify-center rounded-md border border-transparent !bg-[#f63b60] px-6 py-3 text-base font-medium text-white shadow-sm hover:!bg-[#f43b50]"
           >
-            Checkout
-          </Link>
-        </div>
-        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-          <p>
-            or
-            <Link to={"/"}>
-              <button
-                type="button"
-                className="font-medium ml-2 text-indigo-600 hover:text-indigo-500"
-                onClick={() => setOpen(false)}
-              >
-                Continue Shopping
-                <span aria-hidden="true"> &rarr;</span>
-              </button>
-            </Link>
-          </p>
+            CONTINUE
+          </a>
         </div>
       </div>
     </div>
   );
 };
 
-export default Cart;
+export default OrderSummary;

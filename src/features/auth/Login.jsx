@@ -1,16 +1,26 @@
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate } from "react-router-dom";
+import { checkUserAsync, selectError, selectLoggedInUser } from "./authSlice";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const handleSubmit = (e) =>{
-    e.preventDefault()
-  }
+  const dispatch = useDispatch();
+  const error = useSelector(selectError)
+  const user = useSelector(selectLoggedInUser)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   return (
+    <>
+    {user && <Navigate to={"/"} replace={true}/>}
     <div className="min-h-screen bg-gray-50 flex flex-col justify-ceneter py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -19,7 +29,13 @@ const Login = () => {
       </div>
       <div className="mt-8 sm:mx-auto  sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form
+            noValidate
+            className="space-y-6"
+            onSubmit={handleSubmit((data) => {
+              dispatch(checkUserAsync({ email: data.email, password: data.password }));
+            })}
+          >
             <div>
               <label
                 htmlFor="email"
@@ -30,13 +46,19 @@ const Login = () => {
               <div className="mt-1">
                 <input
                   type="email"
-                  name="email"
                   autoComplete="off"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email", {
+                    required: "email is required",
+                    pattern: {
+                      value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
+                      message: "email not valid",
+                    },
+                  })}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email.message}</p>
+                )}
               </div>
             </div>
             <div>
@@ -49,15 +71,13 @@ const Login = () => {
               <div className="mt-1 relative">
                 <input
                   type={visible ? "text" : "password"}
-                  name="password"
                   autoComplete="off"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password", {
+                    required: "password is required",
+                  })}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
                 {visible ? (
-                    
                   <EyeIcon
                     className="absolute right-2 top-2 cursor-pointer h-6 w-6"
                     onClick={() => setVisible(false)}
@@ -68,16 +88,20 @@ const Login = () => {
                     onClick={() => setVisible(true)}
                   />
                 )}
+                {errors.password && (
+                  <p className="text-red-500">{errors.password.message}</p>
+                )}
               </div>
+              {error && <p className="text-red-500">{error.message}</p>}
             </div>
             <div className={`flex justify-end`}>
               <div className="text-sm">
-                <a
-                  href=".forgot-password"
+                <Link
+                  to={"/forgot-password"}
                   className="font-medium text-blue-600 hover:text-blue-500"
                 >
                   Forgot your password?
-                </a>
+                </Link>
               </div>
             </div>
             <div>
@@ -91,13 +115,14 @@ const Login = () => {
             <div className={`flex justify-center w-full`}>
               <h4>New User?</h4>
               <Link to="/signup" className="text-blue-600 pl-2">
-              Sign Up
+                Sign Up
               </Link>
             </div>
           </form>
         </div>
       </div>
     </div>
+    </>
   );
 };
 

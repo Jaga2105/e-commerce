@@ -1,29 +1,55 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import { handleCheckoutStep, selectedCheckoutStep, setAddress } from "./CheckOutSlice";
+import { useForm } from "react-hook-form";
+import { selectUserInfo, updateUserAsync } from "../user/userSlice";
+// import { selectLoggedInUser, updateUserAsync } from "../auth/authSlice";
+// import CheckOutSteps from "./CheckOutSteps";
 
-const addresses = [
-  {
-    name: "John wick",
-    street: "11th Main",
-    city: "Delhi",
-    pinCode: 110001,
-    state: "Delhi",
-    phone: 12312321331,
-  },
-  {
-    name: "John Doe",
-    street: "15th Main",
-    city: "Bangalore",
-    pinCode: 560034,
-    state: "Karnataka",
-    phone: 123123123,
-  },
-];
+
 
 const Address = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const user = useSelector(selectUserInfo);
+  const step = useSelector(selectedCheckoutStep);
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const handleAddress = (e) =>{
+    setSelectedAddress(user.addresses[e.target.value]);
+  }
+  const handleShippingAddress =() =>{
+    if(selectedAddress){
+      dispatch(setAddress({selectedAddress}))
+    }
+  }
+
+  useEffect(() => {
+    // Scroll to the top of the document when the component re-renders
+    window.scrollTo(0, 0);
+  },[step]);
+
+  useEffect(()=>{
+    dispatch(handleCheckoutStep(1));
+  },[step]);
+
   return (
     <div>
-      <form className="bg-white px-5 py-8">
+      <form className="bg-white px-5 py-8" noValidate onSubmit={handleSubmit((data)=>{
+        dispatch(updateUserAsync({
+          ...user, addresses:[...user.addresses, data]
+        }))
+        reset();
+      })}>
         <div className="space-y-6">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-2xl font-semibold leading-7 text-gray-900">
@@ -36,61 +62,52 @@ const Address = () => {
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="first-name"
+                  htmlFor="name"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  First name
+                  Full Name
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="first-name"
-                    id="first-name"
-                    autoComplete="given-name"
+                    {...register('name', {
+                      required: 'name is required',
+                    })}
+                    id="name"
+                    autoComplete="off"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.name && (
+                          <p className="text-red-500">{errors.name.message}</p>
+                        )}
                 </div>
               </div>
 
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="last-name"
+                  htmlFor="phone"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Last name
+                  Contact Number
                 </label>
                 <div className="mt-2">
                   <input
-                    type="text"
-                    name="last-name"
-                    id="last-name"
-                    autoComplete="family-name"
+                    type="tel"
+                    {...register('phone', {
+                      required: 'phone is required',
+                    })}
+                    id="phone"
+                    autoComplete="off"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.phone && (
+                          <p className="text-red-500">{errors.phone.message}</p>
+                        )}
                 </div>
               </div>
-
-              <div className="sm:col-span-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="street-address"
+                  htmlFor="street"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Street address
@@ -98,11 +115,16 @@ const Address = () => {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="street-address"
-                    id="street-address"
-                    autoComplete="street-address"
+                    {...register('street', {
+                      required: 'street address is required',
+                    })}
+                    id="street"
+                    autoComplete="off"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.street && (
+                          <p className="text-red-500">{errors.street.message}</p>
+                        )}
                 </div>
               </div>
 
@@ -116,11 +138,16 @@ const Address = () => {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="city"
+                    {...register('city', {
+                      required: 'City address is required',
+                    })}
                     id="city"
-                    autoComplete="address-level2"
+                    autoComplete="off"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.city && (
+                          <p className="text-red-500">{errors.city.message}</p>
+                        )}
                 </div>
               </div>
 
@@ -134,17 +161,22 @@ const Address = () => {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="region"
+                    {...register('region', {
+                      required: 'State is required',
+                    })}
                     id="region"
-                    autoComplete="address-level1"
+                    autoComplete="off"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.region && (
+                          <p className="text-red-500">{errors.region.message}</p>
+                        )}
                 </div>
               </div>
 
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="postal-code"
+                  htmlFor="pin"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   ZIP / Postal code
@@ -152,11 +184,16 @@ const Address = () => {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="postal-code"
-                    id="postal-code"
-                    autoComplete="postal-code"
+                    {...register('pin', {
+                      required: 'Pincode is required',
+                    })}
+                    id="pin"
+                    autoComplete="off"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                  {errors.pin && (
+                          <p className="text-red-500">{errors.pin.message}</p>
+                        )}
                 </div>
               </div>
             </div>
@@ -185,7 +222,7 @@ const Address = () => {
               Choose from Existing addresses
             </p>
             <ul role="list">
-              {addresses.map((address) => (
+              {user.addresses.map((address, index) => (
                 <li
                   key={address.email}
                   className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
@@ -193,6 +230,8 @@ const Address = () => {
                   <div className="flex gap-x-4">
                     <input
                       name="address"
+                      value={index}
+                      onClick={handleAddress}
                       type="radio"
                       className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
@@ -200,7 +239,7 @@ const Address = () => {
                       <p className="text-sm font-semibold leading-6 text-gray-900">
                         {address.name}
                       </p>
-                      <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                      <p className="mt-1 truncate text-sm leading-5 text-gray-500">
                         {address.street}
                       </p>
                       <p className="mt-1 truncate text-xs leading-5 text-gray-500">
@@ -223,6 +262,7 @@ const Address = () => {
         </div>
         <div className="mt-6">
           <Link
+          onClick={handleShippingAddress}
             to={"/checkout/ordersummary"}
             className="flex items-center justify-center rounded-md border border-transparent !bg-[#f63b60] px-6 py-3 text-base font-medium text-white shadow-sm hover:!bg-[#f43b50]"
           >

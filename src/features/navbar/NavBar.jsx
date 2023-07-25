@@ -6,6 +6,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectedItems } from "../cart/cartSlice";
 
 const user = {
   name: "Tom Cook",
@@ -18,9 +20,9 @@ const navigation = [
   { name: "Team", href: "#", current: false },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "My Profile", link: "/profile" },
+  { name: "My Orders", link: "/orders" },
+  { name: "Sign out", link: "/logout" },
 ];
 
 function classNames(...classes) {
@@ -28,6 +30,9 @@ function classNames(...classes) {
 }
 
 const NavBar = ({ children }) => {
+
+  const items = useSelector(selectedItems);
+
   return (
     <>
       <div className="min-h-full">
@@ -77,9 +82,9 @@ const NavBar = ({ children }) => {
                           />
                         </button>
                         </Link>
-                        <span className="inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
-                          2
-                        </span>
+                        {items.length>0 &&  <span className="inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
+                          {items.length}
+                        </span>}
 
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
@@ -106,15 +111,15 @@ const NavBar = ({ children }) => {
                             {userNavigation.map((item) => (
                               <Menu.Item key={item.name}>
                                 {({ active }) => (
-                                  <a
-                                    href={item.href}
+                                  <Link
+                                    to={item.link}
                                     className={classNames(
                                       active ? "bg-gray-100" : "",
                                       "block px-4 py-2 text-sm text-gray-700"
                                     )}
                                   >
                                     {item.name}
-                                  </a>
+                                  </Link>
                                 )}
                               </Menu.Item>
                             ))}
@@ -149,7 +154,7 @@ const NavBar = ({ children }) => {
                     <Disclosure.Button
                       key={item.name}
                       as="a"
-                      href={item.href}
+                      href={item.link}
                       className={classNames(
                         item.current
                           ? "bg-gray-900 text-white"
@@ -194,9 +199,9 @@ const NavBar = ({ children }) => {
                         />
                       </button>
                     </Link>
-                      <span className="absolute -top-2 inline-flex items-center rounded-xl mb-7 -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
-                        2
-                      </span>
+                    {items.length>0 &&  <span className="absolute top-1 inline-flex items-center rounded-xl -ml-3 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-2 ring-inset ring-red-600/10">
+                          {items.length}
+                        </span>}
                     </div>
                     
                   </div>
@@ -205,7 +210,7 @@ const NavBar = ({ children }) => {
                       <Disclosure.Button
                         key={item.name}
                         as="a"
-                        href={item.href}
+                        href={item.link}
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}

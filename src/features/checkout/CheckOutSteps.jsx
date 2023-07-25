@@ -1,7 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { handleCheckoutStep, selectedCheckoutStep } from './CheckOutSlice';
 
 const CheckOutSteps = () => {
-    const active = 2;
+    const active = useSelector(selectedCheckoutStep);
+    // const dispatch = useDispatch();
+
+    // useEffect(()=>{
+    //     dispatch(handleCheckoutStep())
+    // },[])
   return (
     <div className='flex justify-center items-center pt-10'>
         <div className="flex items-center flex-wrap">
@@ -16,7 +23,7 @@ const CheckOutSteps = () => {
                </div>
 
                <div className={`flex items-center`}>
-                <div className={`${active > 1 ? `justify-center cursor-pointer px-3 py-2 rounded-3xl bg-[#f63b60]` : `justify-center cursor-pointer px-3 py-2 rounded-3xl bg-[#f63b60]!bg-[#FDE1E6]`}`}>
+                <div className={`${active > 1 ? `justify-center cursor-pointer px-3 py-2 rounded-3xl bg-[#f63b60]` : `justify-center cursor-pointer px-3 py-2 rounded-3xl !bg-[#FDE1E6]`}`}>
                     <span className={`${active > 1 ? `text-white` : `text-black`}`}>
                         2. Order Summary
                     </span>

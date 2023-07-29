@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ITEMS_PER_PAGE } from "../../helpers/constants";
 import {
   ChevronDownIcon,
@@ -12,6 +12,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   StarIcon,
+  PencilIcon,
 } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,61 +24,58 @@ import {
   selectAllProducts,
   selectBrands,
   selectCategories,
-  selectProductListStatus,
   selectTotalItems,
-} from "./productSlice";
+} from "../products/productSlice";
 import Pagination from "../../helpers/pagination/Pagination";
-import { Grid } from "react-loader-spinner";
 
-const items = [
-  {
-    id: 1,
-    title: "Back End Developer",
-    department: "Engineering",
-    type: "Full-time",
-    location: "Remote",
-  },
-  {
-    id: 2,
-    title: "Front End Developer",
-    department: "Engineering",
-    type: "Full-time",
-    location: "Remote",
-  },
-  {
-    id: 3,
-    title: "User Interface Designer",
-    department: "Design",
-    type: "Full-time",
-    location: "Remote",
-  },
-];
+// const items = [
+//   {
+//     id: 1,
+//     title: "Back End Developer",
+//     department: "Engineering",
+//     type: "Full-time",
+//     location: "Remote",
+//   },
+//   {
+//     id: 2,
+//     title: "Front End Developer",
+//     department: "Engineering",
+//     type: "Full-time",
+//     location: "Remote",
+//   },
+//   {
+//     id: 3,
+//     title: "User Interface Designer",
+//     department: "Design",
+//     type: "Full-time",
+//     location: "Remote",
+//   },
+// ];
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", current: false },
   { name: "Price: Low to High", sort: "price", order: "asc", current: false },
   { name: "Price: High to Low", sort: "price", order: "desc", current: false },
 ];
-const subCategories = [
-  { name: "Totes", href: "#" },
-  { name: "Backpacks", href: "#" },
-  { name: "Travel Bags", href: "#" },
-  { name: "Hip Bags", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
-];
+// const subCategories = [
+//   { name: "Totes", href: "#" },
+//   { name: "Backpacks", href: "#" },
+//   { name: "Travel Bags", href: "#" },
+//   { name: "Hip Bags", href: "#" },
+//   { name: "Laptop Sleeves", href: "#" },
+// ];
 
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const ProductList = () => {
+const AdminProductList = () => {
   const dispatch = useDispatch();
   const products = useSelector(selectAllProducts);
   const totalItems = useSelector(selectTotalItems);
   const brands = useSelector(selectBrands);
   const categories = useSelector(selectCategories);
-  const status = useSelector(selectProductListStatus);
 
   const [filter, setFilter] = useState({});
   const [sort, setSort] = useState({});
@@ -235,7 +233,16 @@ const ProductList = () => {
 
                 {/* Product grid */}
                 <div className="lg:col-span-3">
-                  <ProductGrid products={products} status={status}/>
+                <div className="flex justify-end">
+                  <Link
+                    to="/admin/product-form"
+                    className="flex items-center rounded-md mx-10 my-5 bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    <PlusCircleIcon className="h-6 w-6"/>
+                    Add New Product
+                  </Link>
+                </div>
+                  <ProductGrid products={products} />
                 </div>
               </div>
             </section>
@@ -433,23 +440,11 @@ const DesktopFilter = ({ handleFilter, filters }) => {
   );
 };
 
-const ProductGrid = ({ products,status }) => {
+const ProductGrid = ({ products }) => {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-2 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-        {status === 'loading' ? (
-            <Grid
-              height="80"
-              width="80"
-              color="rgb(79, 70, 229) "
-              ariaLabel="grid-loading"
-              radius="12.5"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-          ) : null}
           {products.map((product) => (
             <Link to={`product-details/${product.id}`} key={product.id}>
               <div
@@ -490,6 +485,16 @@ const ProductGrid = ({ products,status }) => {
                     </p>
                   </div>
                 </div>
+                {product.deleted && (
+                    <div>
+                      <p className="text-sm text-red-400">product deleted</p>
+                    </div>
+                  )}
+                <div>
+                  <Link to={`/admin/product-form/edit/${product.id}`}>
+                  <PencilSquareIcon className="hidden absolute h-6 w-6 bottom-0 right-2 text-red-600 group-hover:block"/>
+                  </Link>
+                </div>
               </div>
             </Link>
           ))}
@@ -500,4 +505,4 @@ const ProductGrid = ({ products,status }) => {
 };
 
 
-export default ProductList;
+export default AdminProductList;

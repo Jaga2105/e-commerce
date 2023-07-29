@@ -37,8 +37,16 @@ const SignUp = () => {
           <form
             noValidate
             className="space-y-6"
-            onSubmit={handleSubmit((data) =>{
-              dispatch(createUserAsync({email:data.email, password:data.password}))
+            onSubmit={handleSubmit((data) => {
+              dispatch(
+                createUserAsync({
+                   email: data.email,
+                    password: data.password ,
+                  addresses:[],
+                  role:"user"
+                  //TODO: this role can be directly given in the backend
+                  })
+              );
             })}
           >
             <div>
@@ -118,7 +126,7 @@ const SignUp = () => {
                   {...register("confirmPassword", {
                     required: "Confirm password is required",
                     validate: (value, formValues) =>
-                      value === formValues.password || 'password not matching',
+                      value === formValues.password || "password not matching",
                   })}
                   autoComplete="off"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"

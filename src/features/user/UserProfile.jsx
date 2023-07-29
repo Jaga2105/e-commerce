@@ -47,6 +47,7 @@ const UserProfile = () => {
             {"Email:   "}{user.email}
           </h3>
         </div> */}
+        <h1 className="text-xl my-5 font-bold tracking-tight text-red-900">Rloe: {user.role}</h1>
 
         <div className=" border-gray-200 rounded-md px-4 py-6 sm:px-6">
           <p className="mt-0.5 text-lg text-gray-500 mb-2">Your Address :</p>

@@ -2,14 +2,10 @@ import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductByIdAsync, selectProductListStatus, selectedProductById } from "./productSlice";
+import { fetchProductByIdAsync, selectedProductById } from "../products/productSlice";
 import { useParams } from "react-router-dom";
-import { addToCartAsync, selectedItems } from "../cart/cartSlice";
+import { addToCartAsync } from "../cart/cartSlice";
 import { selectLoggedInUser } from "../auth/authSlice";
-import { useAlert } from "react-alert";
-import { toast } from "react-toastify";
-import { Grid } from "react-loader-spinner";
-// import { selectedAddress } from "../checkout/CheckOutSlice";
 
 const colors = [
   { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
@@ -36,7 +32,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const ProductDetails = () => {
+const AdminProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[2]);
 
@@ -47,29 +43,12 @@ const ProductDetails = () => {
   const product = useSelector(selectedProductById)
   console.log(product);
   const user = useSelector(selectLoggedInUser)
-  const items = useSelector(selectedItems)
-  const status = useSelector(selectProductListStatus);
   const dispatch = useDispatch();
   const params = useParams();
-  // const alert = useAlert();
 
   const handleCart = (e) =>{
     e.preventDefault();
-    if (items.findIndex((item) => item.productId === product.id) < 0) {
-      console.log({ items, product });
-      const newItem = {
-        ...product,
-        productId: product.id,
-        quantity: 1,
-        user: user.id,
-      };
-      delete newItem['id'];
-      dispatch(addToCartAsync(newItem));
-      // TODO: it will be based on server response of backend
-      toast.success('Item added to Cart');
-    } else {
-      toast.error('Item Already added');
-    }
+    dispatch(addToCartAsync({...product, quantity:1, user:user.id}))
   }
 
   useEffect(()=>{
@@ -79,18 +58,6 @@ const ProductDetails = () => {
 
   return (
     <div className="bg-white">
-      {status === 'loading' ? (
-        <Grid
-          height="80"
-          width="80"
-          color="rgb(79, 70, 229) "
-          ariaLabel="grid-loading"
-          radius="12.5"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-        />
-      ) : null}
       {product && (
         <div className="pt-6">
           <nav aria-label="Breadcrumb">
@@ -328,13 +295,13 @@ const ProductDetails = () => {
                   </RadioGroup>
                 </div>
 
-                <button
+                {/* <button
                   onClick={handleCart}
                   type="submit"
                   className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Add to Cart
-                </button>
+                </button> */}
               </form>
             </div>
 
@@ -381,4 +348,4 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default AdminProductDetails;

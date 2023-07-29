@@ -8,6 +8,8 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectedItems } from "../cart/cartSlice";
+import { selectLoggedInUser } from "../auth/authSlice";
+import { selectUserInfo } from "../user/userSlice";
 
 const user = {
   name: "Tom Cook",
@@ -16,8 +18,10 @@ const user = {
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
+  { name: "Dashboard", link:"#", user: true },
+  { name: "Team", link:"#", user: true },
+  { name: "Admin", link:"/admin", admin: true },
+  { name: "Orders", link:"/admin/orders", admin: true },
 ];
 const userNavigation = [
   { name: "My Profile", link: "/profile" },
@@ -32,6 +36,8 @@ function classNames(...classes) {
 const NavBar = ({ children }) => {
 
   const items = useSelector(selectedItems);
+  const user = useSelector(selectLoggedInUser);
+  console.log(user);
 
   return (
     <>
@@ -44,28 +50,30 @@ const NavBar = ({ children }) => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <img
-                        className="h-8 w-8"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        className="h-8 w-8 rounded-lg"
+                        src="/e-commerce.png"
                         alt="Your Company"
                       />
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item) => (
-                          <a
+                      {navigation.map((item) =>
+                        item[user.role] ? (
+                          <Link
                             key={item.name}
-                            href={item.href}
+                            to={item.link}
                             className={classNames(
                               item.current
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "rounded-md px-3 py-2 text-sm font-medium"
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                              'rounded-md px-3 py-2 text-sm font-medium'
                             )}
-                            aria-current={item.current ? "page" : undefined}
+                            aria-current={item.current ? 'page' : undefined}
                           >
                             {item.name}
-                          </a>
-                        ))}
+                          </Link>
+                        ) : null
+                      )}
                       </div>
                     </div>
                   </div>
@@ -93,7 +101,7 @@ const NavBar = ({ children }) => {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.imageUrl}
+                              src={"https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"}
                               alt=""
                             />
                           </Menu.Button>
@@ -173,13 +181,13 @@ const NavBar = ({ children }) => {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
+                        src={"https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"}
                         alt=""
                       />
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">
-                        {user.name}
+                        {user.email}
                       </div>
                       <div className="text-sm font-medium leading-none text-gray-400">
                         {user.email}

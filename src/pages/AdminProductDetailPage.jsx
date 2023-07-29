@@ -1,17 +1,14 @@
 import React from 'react'
 import NavBar from '../features/navbar/NavBar'
-import ProductDetails from '../features/products/ProductDetails'
-import Footer from '../helpers/Footer'
+import AdminProductDetails from '../features/admin/AdminProductDetails'
+
 
 const ProductDetailsPage = () => {
   
   return (
-    <>
     <NavBar>
-        <ProductDetails/>
+        <AdminProductDetails/>
     </NavBar>
-    <Footer/>
-    </>
   )
 }
 
